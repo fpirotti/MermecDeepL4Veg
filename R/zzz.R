@@ -4,7 +4,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
 
   if (interactive()) {
     packageStartupMessage(
-      sprintf("✅ Verifico installazione dipendenze" )
+      sprintf("\u2705 Verifico installazione dipendenze" )
     )
     if (!requireNamespace("cli", quietly = FALSE)) {
       utils::install.packages("cli")
@@ -28,7 +28,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
                      "leaflet.extras", "h2o", "shinyWidgets")
 
   required_github <- c("fpirotti/CloudGeometry")
-  availabl<- required_cran %in% rownames(utils::installed.packages())
+  availabl<- vapply(required_cran, requireNamespace, quietly = TRUE, FUN.VALUE = logical(1))
   required_cran2 <-  ifelse(availabl, "\n\u2705", "\n\u274C")
 
   packageStartupMessage(cli::col_green("Verifico elementi mancanti...."),
