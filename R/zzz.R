@@ -4,7 +4,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
 
   if (interactive()) {
     packageStartupMessage(
-      sprintf("\u2705 Verifico installazione dipendenze" )
+      "\u2705 Verifico installazione dipendenze"
     )
     if (!requireNamespace("cli", quietly = FALSE)) {
       utils::install.packages("cli")
@@ -53,5 +53,11 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
       pacman::p_load_gh(pkg)
     }
   }
+
+  packageStartupMessage(cli::col_orange(
+    cli::style_bold("\nEsegui la app con il comando "),
+
+                        )  )
+
  }
 }

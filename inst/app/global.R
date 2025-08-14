@@ -26,7 +26,7 @@ cartella.log.h2o <- "modelliH2O"
 rootProjects <- "data"
 
 ## modelli disponibili
-models <- c(cartella.modelli, list.files(, full.names = T))
+models <- c("", list.files(cartella.modelli, full.names = T))
 
 names(models) <- basename(models)
 # library(leaflet)
