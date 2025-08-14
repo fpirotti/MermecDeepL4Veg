@@ -6,7 +6,10 @@ Vedi [Installazione](#installazione)
 
 ## Installazione
 
-Installa nell'ambiente R che le seguenti righe
+[**Se installate in ambiente MS WINDOWS**]{.underline} prima installate 
+[Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html)!
+
+Installa nell'ambiente R usando le seguenti righe. 
 
 ```r
 

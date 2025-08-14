@@ -1,10 +1,11 @@
 Package: MermecDeepL4Veg
 Title: Installa il prodotto MER MEC Engineering
 Version: 0.0.0.9000 
-Authors@R: 
-    person("Francesco", "Pirotti", , "francesco.pirotti@unipd.it", 
-    role = c("aut", "cre"), 
-    comment = c(ORCID = "0000-0002-4796-6406"))
+Authors@R: person(given = "Francesco",
+           family = "Pirotti",
+           role = c("aut", "cre"),
+           email = "francesco.pirotti@unipd.it",
+           comment = c(ORCID = "0000-0002-4796-6406") ) 
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
