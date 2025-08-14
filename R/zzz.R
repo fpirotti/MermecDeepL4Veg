@@ -8,11 +8,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
     options(repos = c(CRAN = "https://cloud.r-project.org"))
 
   if (!requireNamespace("pacman", quietly = FALSE)) {
-    packageStartupMessage(( " prima installazione della
- app MerMecDeepL4Veg per 'Mer Mec Engineering Srl' ...
- un po' di pazienza che vengono installate le
- dipendenze necessarie")  )
-    install.packages("pacman")
+    utils::install.packages("pacman")
   }
 
   # List all required packages (CRAN or GitHub)

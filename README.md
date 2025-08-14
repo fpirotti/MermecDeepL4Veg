@@ -1,9 +1,3 @@
----
-output: 
-  html_document: 
-    toc: true
----
-
 # Mer Mec Engineering - Mondo Rotaia
 
 ## Installazione
@@ -11,7 +5,9 @@ output:
 Installa nell'ambiente R che le seguenti righe
 
 ```{r}
+
 ## installa la funzione 'remotes' se non già presente; consente di installare il sistema
+
 if (!requireNamespace("remotes", quietly = TRUE)) {
   install.packages("remotes")
 }
