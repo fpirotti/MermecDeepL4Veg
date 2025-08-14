@@ -28,19 +28,19 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
                      "leaflet.extras", "h2o", "shinyWidgets")
 
   required_github <- c("fpirotti/CloudGeometry")
-  availabl<- required_cran %in% rownames(installed.packages())
-  required_cran <- setNames(ifelse(availabl, "\n\u2705", "\n\u274C"), required_cran)
+  availabl<- required_cran %in% rownames(utils::installed.packages())
+  required_cran2 <-  ifelse(availabl, "\n\u2705", "\n\u274C")
 
   packageStartupMessage(cli::col_green("Verifico elementi mancanti...."),
     sprintf("%s %s ",
-      required_cran, names(required_cran))
+            required_cran2, required_cran)
   )
   if(any(!availabl)){
     packageStartupMessage(
       cli::col_red("Installo i seguenti elementi mancanti, potrebbe richiedere qualche minuto...."),
                           sprintf("%s %s ",
-                                  required_cran[!availabl],
-                                  names(required_cran)[!availabl])
+                                  required_cran2[!availabl],
+                                  required_cran[!availabl])
                           )
 
   }
