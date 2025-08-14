@@ -1,5 +1,9 @@
 # Mer Mec Engineering - Mondo Rotaia
 
+Vedi [Installazione]
+
+![](images/clipboard-3706240923.png)
+
 ## Installazione
 
 Installa nell'ambiente R che le seguenti righe
@@ -16,5 +20,3 @@ remotes::install_github("fpirotti/MermecDeepL4Veg")
 
 
 ```
-
-![](images/clipboard-3706240923.png)
