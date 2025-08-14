@@ -13,14 +13,14 @@ Installa nell'ambiente R usando le seguenti righe.
 
 ```r
 
-## Installa la funzione 'remotes' se non già presente; consente di installare il sistema
+## Installa la funzione 'pacman' se non già presente; consente di installare il sistema
 
 if (!requireNamespace("remotes", quietly = TRUE)) {
-  install.packages("remotes")
+  install.packages("pacman")
 }
 
 ## Installa la app -- Attenzione, ci metterà tra 2 minuti e 30 minuti 
-remotes::install_github("fpirotti/MermecDeepL4Veg")
+pacman::p_load_gh("fpirotti/MermecDeepL4Veg")
 
 ## Esegui la app
 MermecDeepL4Veg::runMermecApp()

@@ -7,20 +7,38 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
       "\u2705 Verifico installazione dipendenze..."
     )
     if (!requireNamespace("cli", quietly = FALSE)) {
+
+      packageStartupMessage(
+        "\u2705  Installo funzionalità cli"
+      )
       utils::install.packages("cli")
     }
     if (!requireNamespace("utils", quietly = FALSE)) {
+
+      packageStartupMessage(
+        "\u2705  Installo funzionalità utils"
+      )
       utils::install.packages("utils")
     }
-
+    packageStartupMessage(
+      "\u2705 Verifico opzioni..."
+    )
     # Set a CRAN mirror for non-interactive installations just in case
     options(repos = c(CRAN = "https://cloud.r-project.org"))
     options(timeout = 600) # 10 minutes
 
   if (!requireNamespace("pacman", quietly = FALSE)) {
+
+    packageStartupMessage(
+      "\u2705  Installo funzionalità pacman..."
+    )
     utils::install.packages("pacman")
   }
 
+
+  packageStartupMessage(
+    "\u2705 Verifico ulteriori dipendenze..."
+  )
   # List all required packages (CRAN or GitHub)
   required_cran <- c("leaflet", "cli", "shiny", "shinydashboardPlus",
                      "shinydashboard", "terra",
@@ -55,7 +73,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
   }
 
   packageStartupMessage(cli::col_green(
-    cli::style_bold("\nEsegui la app con il comando ")) ,
+    cli::style_bold("\n===> Esegui la app con il comando seguente: ")) ,
     cli::code_highlight("runMermecApp()") )
  }
 }
