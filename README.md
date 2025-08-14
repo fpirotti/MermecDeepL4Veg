@@ -8,7 +8,7 @@ Vedi [Installazione](#installazione)
 
 Installa nell'ambiente R che le seguenti righe
 
-```{R}
+```r
 
 ## installa la funzione 'remotes' se non già presente; consente di installare il sistema
 
