@@ -1,0 +1,22 @@
+Package: MermecDeepL4Veg
+Title: Installa il prodotto MER MEC Engineering
+Version: 0.0.0.9000 
+Authors@R: 
+    person("Francesco", "Pirotti", , "francesco.pirotti@unipd.it", 
+    role = c("aut", "cre"), 
+    comment = c(ORCID = "0000-0002-4796-6406"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Imports: 
+    h2o,
+    leaflet,
+    leaflet.extras,
+    lidR,
+    sf,
+    shiny,
+    shinydashboardPlus,
+    shinyjs,
+    terra

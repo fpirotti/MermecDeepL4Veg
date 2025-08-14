@@ -1,0 +1,40 @@
+---
+title: "Manuale D'Uso"
+author: "CIRGEO - Francesco Pirotti"
+date: "`r Sys.Date()`"
+output:
+  slidy: slidy_presentation
+  html_document: default
+  pdf_document: default
+  ioslides: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](images/clipboard-34019662.png)
+
+## Piattaforma AI rischio alberature su infrastruttura
+
+Il software applica un modello di AI a dati telerilevati di diverso genere, stimando, integrando tecniche di deep learning e di segmentazione delle alberature dal dato 3D, dei valori di pericolosità all'infrastruttura.
+
+## Dati di input
+
+ll modello richiede dati grezzi dai quali si ricavano i descrittori in formato GeoTIFF e LAS/LAZ.
+
+Inoltre va caricato il dato vettoriale dell'infrastruttura. Nel caso dell'infrastruttura ferroviaria trattasi di un polilinea. Questo consente di inserire metriche spaziali relative alla posizione degli elementi di pericolo rispetto all'oggetto considerato.
+
+Il pannello carica tutti i file presenti nella cartella di progetto e cerca di 'indovinare' a quale descrittore appartiene il dato, presentando dei menu a tendina per consentire all'utente di associare correttamente il dato al descrittore usato nel modello.
+
+### STEP 1
+
+Questa fase legge tutti i file e ne esporta le informazioni di base, come estensioni, risoluzioni, sistemi di riferimento ecc... Le informazioni vengono salvate in un cache in modo da non rendere necessaria l'esecuzione di questa fase ogni qualvolta si lancia il modulo.
+
+Nota bene che se presente il dato lidar, i livelli di DTM DSM e mappa delle altezze (nDSM) viene calcolata automaticamente.
+
+### STEP 2
+
+In questa fase di pre-processing i file vengono letti e vari metodi vengono usati per estrarre i descrittori necessari poi per applicare il modello. I descrittori sono diversi, dalla firma spettrale e termica alla struttura tridimensionale del dato lidar. A seconda dei dati di input possono essere usati un numero di descrittori diverso, fino a qualche decina.
+
+Nota Bene; in questa fase i dati devono essere tutti nello stesso sistema di riferimento e su un sistema proiettato (no latitudine e longitudine)

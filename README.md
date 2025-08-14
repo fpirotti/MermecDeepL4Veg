@@ -1,1 +1,24 @@
-# Mer Mec Engineering - MermecDeepL4Veg
+---
+output: 
+  html_document: 
+    toc: true
+---
+
+# Mer Mec Engineering - Mondo Rotaia
+
+## Installazione
+
+Installa nell'ambiente R che le seguenti righe
+
+```{r}
+## installa la funzione 'remotes' se non già presente; consente di installare il sistema
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+
+remotes::install_github("fpirotti/MermecDeepL4Veg")
+
+
+```
+
+![](images/clipboard-3706240923.png)
