@@ -9,14 +9,14 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
     if (!requireNamespace("cli", quietly = FALSE)) {
 
       packageStartupMessage(
-        "\u2705  Installo funzionalità cli"
+        "\u2705  Installo funzionalit\u00E0 cli"
       )
       utils::install.packages("cli")
     }
     if (!requireNamespace("utils", quietly = FALSE)) {
 
       packageStartupMessage(
-        "\u2705  Installo funzionalità utils"
+        "\u2705  Installo funzionalit\u00E0 utils"
       )
       utils::install.packages("utils")
     }
@@ -30,7 +30,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
   if (!requireNamespace("pacman", quietly = FALSE)) {
 
     packageStartupMessage(
-      "\u2705  Installo funzionalità pacman..."
+      "\u2705  Installo funzionalit\u00E0 pacman..."
     )
     utils::install.packages("pacman")
   }
@@ -71,7 +71,6 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
       pacman::p_load_gh(pkg)
     }
   }
-
   packageStartupMessage(cli::col_green(
     cli::style_bold("\n===> Esegui la app con il comando seguente: ")) ,
     cli::code_highlight("runMermecApp()") )

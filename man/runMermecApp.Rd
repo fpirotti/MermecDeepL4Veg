@@ -4,13 +4,14 @@
 \alias{runMermecApp}
 \title{runMermecApp}
 \usage{
-runMermecApp(...)
+runMermecApp(forceH2Oriavvio = FALSE)
 }
 \arguments{
-\item{...}{parametri di input, ma possono essere lasciati vuoti}
+\item{forceH2Oriavvio}{se valore è VERO (TRUE) allora all'avvio viene
+forzato il riavvio dell'engine AI di H2O}
 }
 \description{
-Esegue il software, vedi esempio
+Esegue il software, vedi esempio.
 }
 \examples{
 # runMermecApp()

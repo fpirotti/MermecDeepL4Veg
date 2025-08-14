@@ -40,7 +40,7 @@ is_h2o_alive <- function() {
   })
 }
 
-
+forceH2Oriavvio <- getOption("forceH2Oriavvio")
 # h2o.init( port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
 
 isalive <- is_h2o_alive()[[1]] && !is.null(h2o.getConnection())
@@ -48,14 +48,24 @@ if(!isalive) {
   file.remove(list.files(cartella.log.h2o, full.names = TRUE))
   h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
 } else {
-  message(cli::col_green( "Spengo e riavvio l'engine di AI...")  )
-  # h2o.shutdown(prompt = F)
 
-  # file.remove(list.files(cartella.log.h2o, full.names = TRUE))
-  # Sys.sleep(3)
-  message(cli::col_green( "Riavvio l'engine di AI...") )
-  # h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
-  message(cli::col_green( "Engine di AI riavviata...") )
+
+  if(!is.null(forceH2Oriavvio)){
+    if(forceH2Oriavvio){
+      message(cli::col_green( "Spengo e riavvio l'engine di AI, ci vuole qualche secondo...")  )
+      h2o.shutdown(prompt = F)
+      file.remove(list.files(cartella.log.h2o, full.names = TRUE))
+      message(cli::col_green( "Spenta l'engine AI...") )
+      Sys.sleep(3)
+      message(cli::col_green( "Riavvio l'engine AI...") )
+      h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
+      message(cli::col_green( "Engine di AI riavviata...") )
+    } else {
+      message(cli::col_green( "L'engine  AI già avviata e disponibile")  )
+    }
+  }else {
+    message(cli::col_green( "Nessuna richiesta di forzare il riavvio...")  )
+  }
 }
 h2o.log.files <- list.files(cartella.log.h2o, full.names = TRUE)
 options(shiny.maxRequestSize = 100*1024^2)

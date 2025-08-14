@@ -1,15 +1,18 @@
 #' runMermecApp
 #'
-#' @param ... parametri di input, ma possono essere lasciati vuoti
+#' @param forceH2Oriavvio se valore è VERO (TRUE) allora all'avvio viene
+#' forzato il riavvio dell'engine AI di H2O
 #'
 #' @description
-#' Esegue il software, vedi esempio
+#' Esegue il software, vedi esempio.
 #'
 #' @export
 #' @examples
 #' # runMermecApp()
-runMermecApp <- function(...) {
+runMermecApp <- function(forceH2Oriavvio=FALSE) {
   app_dir <- system.file("app", package = "MermecDeepL4Veg")
+  options(forceH2Oriavvio = forceH2Oriavvio)
+
   # source("global.R", local = TRUE)
   shiny::runApp(app_dir, ...)
 }

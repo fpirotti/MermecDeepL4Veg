@@ -19,8 +19,9 @@ header <- shinydashboardPlus::dashboardHeader(
         a(
             href = "manuale/relazione.pdf",
             target = "_blank",
-            style = "color:white; padding: 15px;",
-            "📖 Manual"
+            style = "color:white; padding: 15px; width:24px;",
+            title  ="relazione",
+            "📖 "
         ),
         class = "dropdown"
     ),
