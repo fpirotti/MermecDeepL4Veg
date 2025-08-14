@@ -4,7 +4,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
 
   if (interactive()) {
     packageStartupMessage(
-      "\u2705 Verifico installazione dipendenze"
+      "\u2705 Verifico installazione dipendenze..."
     )
     if (!requireNamespace("cli", quietly = FALSE)) {
       utils::install.packages("cli")
