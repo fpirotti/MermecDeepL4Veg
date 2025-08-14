@@ -29,21 +29,7 @@ rootProjects <- "data"
 models <- c("", list.files(cartella.modelli, full.names = T))
 
 names(models) <- basename(models)
-# library(leaflet)
-# library(shiny)
-# library(terra)
-# library(sf)
-# library(lidR)
-# library(promises)
-# library(future)
-# library(ipc)
-# library(log4r)
-# library(h2o)
-# library(shinyjs)
-# library(leaflet.extras)
-# library(tidyverse)
 
-# library(shinydashboard)
 if(!dir.exists(cartella.log.h2o)) { dir.create(cartella.log.h2o) }
 is_h2o_alive <- function() {
   tryCatch({
@@ -55,12 +41,12 @@ is_h2o_alive <- function() {
 }
 
 
-h2o.init( port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
+# h2o.init( port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
 
 isalive <- is_h2o_alive()[[1]] && !is.null(h2o.getConnection())
 if(!isalive) {
   file.remove(list.files(cartella.log.h2o, full.names = TRUE))
-  h2o.init(log_dir = cartella.log.h2o, log_level = "INFO")
+  h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
 } else {
   message(cli::col_green( "Spengo e riavvio l'engine di AI...")  )
   h2o.shutdown(prompt = F)
@@ -68,7 +54,7 @@ if(!isalive) {
   file.remove(list.files(cartella.log.h2o, full.names = TRUE))
   Sys.sleep(3)
   message(cli::col_green( "Riavvio l'engine di AI...") )
-  h2o.init(log_dir = cartella.log.h2o, log_level = "INFO")
+  h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
   message(cli::col_green( "Engine di AI riavviata...") )
 }
 h2o.log.files <- list.files(cartella.log.h2o, full.names = TRUE)
