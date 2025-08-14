@@ -10,5 +10,6 @@
 #' # runMermecApp()
 runMermecApp <- function(...) {
   app_dir <- system.file("app", package = "MermecDeepL4Veg")
+  # source("global.R", local = TRUE)
   shiny::runApp(app_dir, ...)
 }
