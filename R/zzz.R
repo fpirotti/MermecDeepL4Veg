@@ -54,10 +54,8 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
     }
   }
 
-  packageStartupMessage(cli::col_orange(
-    cli::style_bold("\nEsegui la app con il comando "),
-
-                        )  )
-
+  packageStartupMessage(cli::col_green(
+    cli::style_bold("\nEsegui la app con il comando ")) ,
+    cli::code_highlight("runMermecApp()") )
  }
 }
