@@ -1,6 +1,6 @@
 # Mer Mec Engineering - Mondo Rotaia
 
-Vedi [Installazione]
+Vedi [Installazione](#installazione)
 
 ![](images/clipboard-3706240923.png)
 
