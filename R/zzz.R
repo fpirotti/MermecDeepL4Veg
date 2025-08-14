@@ -6,6 +6,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
 
     # Set a CRAN mirror for non-interactive installations just in case
     options(repos = c(CRAN = "https://cloud.r-project.org"))
+    options(timeout = 600) # 10 minutes
 
   if (!requireNamespace("pacman", quietly = FALSE)) {
     utils::install.packages("pacman")
@@ -14,7 +15,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
   # List all required packages (CRAN or GitHub)
   required_cran <- c("leaflet", "cli", "shiny", "shinydashboardPlus",
                      "shinydashboard", "terra",
-                     "sf", "lidR", "shinyjs",
+                     "sf", "lidR", "shinyjs", "cli",
                      "leaflet.extras", "h2o", "shinyWidgets")
 
   required_github <- c("fpirotti/CloudGeometry")

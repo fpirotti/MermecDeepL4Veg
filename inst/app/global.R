@@ -7,11 +7,13 @@ if (!require("pacman")) {
  dipendenze necessarie")  )
   install.packages("pacman")
 }
+options(timeout = 600) # 10 minutes
 pacman::p_load( leaflet, shiny, shinydashboardPlus,
-                shinydashboard, terra,
+                shinydashboard, terra, cli,
                 sf, lidR, shinyjs,
                 leaflet.extras, h2o, shinyWidgets) #  tidyverse, bslib,
 if(!require(CloudGeometry)){
+  message(cli::col_green( "Non dovrebbe esserci qui")  )
   devtools::install_github("fpirotti/CloudGeometry")
   library(CloudGeometry)
 }
