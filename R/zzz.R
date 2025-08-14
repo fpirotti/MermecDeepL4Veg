@@ -3,6 +3,15 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
 .onLoad <- function(libname, pkgname) {
 
   if (interactive()) {
+    packageStartupMessage(
+      sprintf("✅ Verifico installazione dipendenze" )
+    )
+    if (!requireNamespace("cli", quietly = FALSE)) {
+      utils::install.packages("cli")
+    }
+    if (!requireNamespace("utils", quietly = FALSE)) {
+      utils::install.packages("utils")
+    }
 
     # Set a CRAN mirror for non-interactive installations just in case
     options(repos = c(CRAN = "https://cloud.r-project.org"))
@@ -19,8 +28,22 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
                      "leaflet.extras", "h2o", "shinyWidgets")
 
   required_github <- c("fpirotti/CloudGeometry")
+  availabl<- required_cran %in% rownames(installed.packages())
+  required_cran <- setNames(ifelse(availabl, "\n\u2705", "\n\u274C"), required_cran)
 
-  # Load/install CRAN packages
+  packageStartupMessage(cli::col_green("Verifico elementi mancanti...."),
+    sprintf("%s %s ",
+      required_cran, names(required_cran))
+  )
+  if(any(!availabl)){
+    packageStartupMessage(
+      cli::col_red("Installo i seguenti elementi mancanti, potrebbe richiedere qualche minuto...."),
+                          sprintf("%s %s ",
+                                  required_cran[!availabl],
+                                  names(required_cran)[!availabl])
+                          )
+
+  }
   pacman::p_load(char = required_cran, install = TRUE)
 
   # Load/install GitHub packages if needed
