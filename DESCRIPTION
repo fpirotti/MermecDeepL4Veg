@@ -1,6 +1,6 @@
 Package: MermecDeepL4Veg
 Title: Installa il prodotto MER MEC Engineering
-Version: 0.0.0.95 
+Version: 0.0.0.96 
 Authors@R: person(given = "Francesco",
            family = "Pirotti",
            role = c("aut", "cre"),
