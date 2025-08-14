@@ -11,11 +11,19 @@
 options(shiny.maxRequestSize = 200*1024^2)
 
 header <- shinydashboardPlus::dashboardHeader(
-    title =
-    shiny::fluidRow(shiny::column(width = 4,
+    title =   shiny::fluidRow(shiny::column(width = 4,
                            tags$img(style="width:150px",
                                     src = "images/clipboard-34019662.png") ),
                     shiny::column(width = 8, p("MONDO ROTAIA ") ) ),
+    tags$li(
+        a(
+            href = "manuale/relazione.pdf",
+            target = "_blank",
+            style = "color:white; padding: 15px;",
+            "📖 Manual"
+        ),
+        class = "dropdown"
+    ),
 
     titleWidth = 400
 )
@@ -62,7 +70,7 @@ body <- dashboardBody(
         tags$link(rel = "stylesheet", type = "text/css", href = "styles.css?v=3dddxxsff")
     ),
     useShinyjs(),
-    tabBox(id = 'tabs', title = icon('gear'), width = 12,
+    tabBox(id = 'tabs', title = "ss", width = 12,
            tabPanel("Input",
                     div(
                         div(title="Questa soglia evita di utilizzare un dato lidar inutilmente distante dalla infrastruttura che si vuole analizzare",
@@ -72,11 +80,18 @@ body <- dashboardBody(
                                             value = 200,
                                             max = 50000) ),
 
+                        div(title="Forza il sistema di riferimento - inserisci un codice EPGS o lascia vuoto per identificarlo automaticamente",
+                            shiny::numericInput('crs', 'Sistema di riferimento',
+                                            min = 1, step = 1,
+                                            value = NA,
+                                            max = 99999)
+                             ),
                         shiny::numericInput('resolution', 'Risoluzione griglia output (m)',
                                             min = 0.1, step = 0.1,
                                             value = 1,
                                             max = 10),
-                        shiny::uiOutput("files2process") ),
+                        shiny::uiOutput("files2process")
+                        ),
 
                     ),
            tabPanel("Mappa", div(
@@ -110,6 +125,7 @@ body <- dashboardBody(
 )
 
 ui <- dashboardPage(header, siderbar, body, skin = "black")
+
 
 # Define UI for application that draws a histogram
 # fluidPage(

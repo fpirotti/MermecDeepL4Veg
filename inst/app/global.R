@@ -49,12 +49,12 @@ if(!isalive) {
   h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
 } else {
   message(cli::col_green( "Spengo e riavvio l'engine di AI...")  )
-  h2o.shutdown(prompt = F)
+  # h2o.shutdown(prompt = F)
 
-  file.remove(list.files(cartella.log.h2o, full.names = TRUE))
-  Sys.sleep(3)
+  # file.remove(list.files(cartella.log.h2o, full.names = TRUE))
+  # Sys.sleep(3)
   message(cli::col_green( "Riavvio l'engine di AI...") )
-  h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
+  # h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
   message(cli::col_green( "Engine di AI riavviata...") )
 }
 h2o.log.files <- list.files(cartella.log.h2o, full.names = TRUE)

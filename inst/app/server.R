@@ -298,8 +298,8 @@ function(input, output, session) {
                     lidar <- rf
                     ll <- lidR::readLASheader(rf)
                     crs[['LAS']] = st_crs(lidR::crs(ll))$wkt
-                    if(is.na(crs[['LAS']])){
 
+                    if(is.na(crs[['LAS']])){
 
                       showModal(modalDialog(
                         title = "CRS Mancante!",
@@ -312,12 +312,15 @@ function(input, output, session) {
                           modalButton("Cancella"),
                           actionButton("crs_submit_feedback", "Registra")
                         )
-                      ))
+                       )
+                      )
                       logIt(
                             type="warning",
-                            "Non è codificato un sistema di riferimento nel
+"Non è codificato un sistema di riferimento nel
  dato LAS/LAZ, il file è corrotto o non è stato esportato
  correttamente. Per proiettare", session=session)
+
+                      break
                     }
                     b<-lidR::st_bbox(ll)
                 }
@@ -349,22 +352,32 @@ function(input, output, session) {
 
             }
 
-            if(!exists("infrastruttura") || !exists("lidar")) {
-              logIt(session = session, type="warning", alert = T,
-                    "Nessun file per infrastruttura o lidar trovato nella selezione,
-                    non è possibile proseguire. Assicurati di aver assegnato
-                    correttamente gli input nella sezione corrispondente")
 
-            } else {
-
-              dat( list(bb=list(lng1 =minx,lat1 = miny,lng2 = maxx,lat2 = maxy),
-                        lidar=lidar,
-                        infrastruttura=infrastruttura,
-                        data = bboxes,
-                        crss=crs) )
-            }
 
         }) #%...>% dat
+
+       if(!exists("infrastruttura") && exists("lidar") ) {
+         logIt(session = session, type="warning", alert = T,
+               "Nessun file vettoriale che rappresenta l'infrastruttura nel progetto,
+                    non è possibile proseguire. Assicurati di aver caricato un progetto con
+tutti i file, almeno lidar e infrastruttura (vedi manuale)")
+         return(NULL)
+       }
+
+       if(!exists("infrastruttura") || !exists("lidar")) {
+         logIt(session = session, type="warning", alert = T,
+               "Nessun file per infrastruttura o lidar trovato nella selezione,
+                    non è possibile proseguire. Assicurati di aver assegnato
+                    correttamente gli input nella sezione corrispondente")
+         return(NULL)
+
+       }
+
+         dat( list(bb=list(lng1 =minx,lat1 = miny,lng2 = maxx,lat2 = maxy),
+                   lidar=lidar,
+                   infrastruttura=infrastruttura,
+                   data = bboxes,
+                   crss=crs) )
 
      })
 
