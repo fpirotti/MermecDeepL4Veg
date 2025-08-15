@@ -48,7 +48,11 @@ sup{
     max-width: 100%;
     z-index: 99999;
 }
-
+ #log {
+  height: calc(100vh - 220px);  /* Set to full viewport height */
+  overflow-y: auto;  /* Enable scrolling if content exceeds height */
+  white-space: pre;  /* Preserve formatting (spaces and newlines) */
+}
 #logAI {
   height: calc(100vh - 220px);  /* Set to full viewport height */
   font-size: x-small;
@@ -60,3 +64,9 @@ sup{
     margin: 15px;
     color: black;
 }
+
+.disabled-btn {
+  opacity: 0.5;             /* visual cue */
+  cursor: not-allowed;      /* cursor style */
+}
+

@@ -60,7 +60,7 @@ siderbar <- dashboardSidebar(
         shiny::actionButton("runProcess01",
                             "Step 1 indici dataset" ) ,
         shiny::actionButton("runProcess02",
-                            "Step 2 estrazione descrittori", disabled = F ) ,
+                            "Step 2 estrazione descrittori", disabled = TRUE ) ,
         # shiny::actionButton("runProcess03",
         #                     "Step 3a addestra modello", disabled = F ) ,
 
@@ -69,8 +69,8 @@ siderbar <- dashboardSidebar(
                             "Seleziona modello", choices = models
                               ) ,
         shiny::actionButton("runProcess04",
-                            "Step 3 applica AI", disabled = F ) ,
-        shiny::downloadButton("runProcess05",  "Step 4 Scarica risultati"  )
+                            "Step 3 applica AI", disabled = TRUE ) ,
+        shiny::downloadButton("runProcess05",  "Step 4 Scarica risultati", class = "disabled-btn"  )
 
     )
 
@@ -79,7 +79,7 @@ siderbar <- dashboardSidebar(
 body <- dashboardBody(
     tags$head(
         tags$script(src="myjs.js"),
-        tags$link(rel = "stylesheet", type = "text/css", href = "styles.css?v=3dddxxsff")
+        tags$link(rel = "stylesheet", type = "text/css", href = "styles.css?v=3ddf")
     ),
     useShinyjs(),
     tabBox(id = 'tabs',   width = 12,
@@ -113,12 +113,13 @@ body <- dashboardBody(
              ),
            tabPanel("Log Processi", div(id="logPanelContent",
 
-                   checkboxGroupInput("checkGroupLog", "Visualizza",
+                   checkboxGroupInput("checkGroupLog", "Visualizza Log Processi",
                                       choices = loglevels,
                                       selected = c('error','info','warning'),
                                       inline = TRUE) ,
-               div(id="log", tags$h4("Log processi")) )
-               ),
+                   div(id="log")
+               )
+             ),
            tabPanel("Log AI/DL",
                     fluidRow( shiny::column(6, selectInput("LogLevelAI", "Livello ",
                                        choices = loglevelsAI,

@@ -18,6 +18,7 @@ function(input, output, session) {
     risultatoDir <- NULL
     lidar <- NULL
     dat <- reactiveVal(NULL)
+    cachedDataList <- reactiveVal(NULL)
     myselectedModel <- NULL
     PRODOTTI <- reactiveVal(NULL)
     # Reactive value to hold the future object
@@ -88,10 +89,25 @@ function(input, output, session) {
 
     ## CACHE SAVE WHEN CHANGED -----
     observeEvent(dat(), {
-        req(cache)
+        # req(cache)
         dt.data<-dat()
         logIt("Salvo Cache...")
         save(dt.data, file=cache)
+        shinyjs::disable("runProcess02")
+        shinyjs::disable("runProcess03")
+        shinyjs::disable("runProcess04")
+        shinyjs::addCssClass("runProcess05", "disabled-btn")
+
+        if(isTruthy(dt.data) && !is.null(dt.data$processingSTEP)){
+          shinyjs::enable("runProcess02")
+          if( dt.data$processingSTEP > 0){
+            shinyjs::enable("runProcess03")
+          }
+          if( dt.data$processingSTEP > 1){
+            shinyjs::enable("runProcess04")
+            shinyjs::removeClass("runProcess05", "disabled-btn")
+          }
+        }
     })
 
     ## LOG TYPE CHANGE ----
@@ -228,7 +244,7 @@ function(input, output, session) {
 
         vars  <- names(AI.variables)
         vars.length <- length(vars)
-        if(is.null(dd) || is.null(dd$lidar)){
+        if(!isTruthy(dd) || is.null(dd$lidar)){
             logIt(sprintf("STEP 1 - verifico %d file - ", vars.length)
             )
         } else {
@@ -285,7 +301,7 @@ function(input, output, session) {
                 if(tolower(ext)=="tif") {
                     r <- terra::rast(rf)
                     crs[[iname]] = st_crs(terra::crs(r), proj=T)$wkt
-                    logIt(session = session, crs[[iname]])
+                    logIt(session = session, "Aggiungo raster ", basename(rf) )
                     b <- sf::st_bbox(r)
                 }
                 if(tolower(ext)=="gpkg" || tolower(ext)=="shp") {
@@ -379,7 +395,8 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
 
        }
 
-         dat( list(bb=list(lng1 =minx,lat1 = miny,lng2 = maxx,lat2 = maxy),
+         dat( list( processingSTEP=1,
+                    bb=list(lng1 =minx,lat1 = miny,lng2 = maxx,lat2 = maxy),
                    lidar=lidar,
                    infrastruttura=infrastruttura,
                    data = bboxes,
@@ -387,22 +404,13 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
 
      })
 
-    # Handle submission of CRS feedback
-    observeEvent(input$crs_submit_feedback, {
-      removeModal()
-      showNotification("Grazie - CRS registrato", type = "message")
-      ff <- dat()
-
-      browser()
-    })
-
 
     ## step 2 --------
     observeEvent(input$runProcess02, {
 
         dd<-(isolate(dat()))
 
-        if(is.null(dd) || is.null(dd$lidar)){
+        if(!isTruthy(dd) || is.null(dd$lidar)){
             logIt(sprintf("Cache non pronta, ri-esegui STEP 1!"  ),alert = T)
             return(NULL)
         }
@@ -694,7 +702,8 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         descrittori[["hazard"]] <- mask(descrittori[["hazard"]], r_crowns)
         stack <- terra::rast(descrittori )
         writeRaster(stack,file.path(risultatoDir, "stack.tif" ), overwrite=T  )
-        crowns[names(stack)]<-NULL
+        intr<- intersect(names(crowns), names(stack) )
+        if(length(intr)>0) crowns[intr]<-NULL
         crowns.ext <- terra::zonal(stack, r_crowns)
         crownsb <- cbind(crowns, crowns.ext)
 
@@ -712,6 +721,8 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         PRODOTTI(descrittori)
 
         dd$crowns <- crownsb
+
+        dd$processingSTEP <- 2
         dat(dd)
         progress$close()
 
@@ -862,7 +873,7 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
     output$runProcess05 <- downloadHandler(
 
       filename = function() {
-        paste0("files_", Sys.Date(), ".zip")
+        paste0(basename(input$dataFolder),"_risultati_", Sys.Date(), ".zip")
       },
       content = function(file) {
         # Cartella da comprimere
@@ -987,7 +998,7 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
       removeModal()
       # Your real action happens here
       file.remove(list.files(cacheDir, recursive = TRUE,full.names = TRUE))
-      dat(NULL)
+      dat(NA)
       PRODOTTI(NULL)
     })
 
