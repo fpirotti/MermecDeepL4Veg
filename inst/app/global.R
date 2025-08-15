@@ -10,7 +10,7 @@ if (!require("pacman")) {
 options(timeout = 600) # 10 minutes
 pacman::p_load( leaflet, shiny, shinydashboardPlus,
                 shinydashboard, terra, cli,
-                sf, lidR, shinyjs,
+                sf, lidR, shinyjs, dplyr,
                 leaflet.extras, h2o, shinyWidgets) #  tidyverse, bslib,
 if(!require(CloudGeometry)){
   message(cli::col_green( "Non dovrebbe esserci qui")  )
@@ -98,7 +98,7 @@ AI.variables = list('Infrastruttura'= 'Shapefile o Geopackage con elementi vetto
 
 logIt <- function(..., type="info", alert=F, session=NULL){
 
-  msg = paste(..., collapse = " ")
+  msg = gsub("\n", "",gsub("\r", "", paste(..., collapse = " ") ) )
 
     shinyjs::runjs( sprintf("$('#log').append('<p class=\"%s\" >%s&nbsp;-&nbsp;%s</p>');  ",
                             type, date(),  msg) )

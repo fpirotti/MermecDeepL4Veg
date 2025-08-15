@@ -181,7 +181,7 @@ function(input, output, session) {
               sel <- filesAndAttributes[[paste0("select_", name)]]
             }
             updateSelectInput(inputId = paste0("select_", name),
-                                                        choices = ll2,
+                                                        choices = c(FALSE,ll2),
                                                         selected = sel)
 
         })
@@ -192,6 +192,8 @@ function(input, output, session) {
                              value = filesAndAttributes[["distanza.max.intorno.infrastruttura"]])
           updateNumericInput(inputId = "resolution",
                              value = filesAndAttributes[["resolution"]])
+          updateNumericInput(inputId = "crs",
+                             value = filesAndAttributes[["crs"]])
 
         }
 
@@ -207,7 +209,7 @@ function(input, output, session) {
       }
       filesAndAttributes[["distanza.max.intorno.infrastruttura"]] <- input[["distanza.max.intorno.infrastruttura"]]
       filesAndAttributes[["resolution"]] <- input[["resolution"]]
-      print("here")
+      filesAndAttributes[["crs"]] <- input[["crs"]]
 
       save(filesAndAttributes, file= file.path(rootProjects, input$dataFolder, "params.rda") )
 
@@ -230,7 +232,7 @@ function(input, output, session) {
             logIt(sprintf("STEP 1 - verifico %d file - ", vars.length)
             )
         } else {
-            logIt(type = "warning", sprintf("STEP 1:  %d file presenti in cache, passa   allo step 2", vars.length
+            logIt(type = "warning", sprintf("STEP 1:  %d file presenti in cache, passa   allo step 2 oppure elimina la cache", vars.length
                                             ), session=session )
             # updateTabsetPanel(session, "tabs", selected = "Log Processi")
             return(NULL)
@@ -246,7 +248,7 @@ function(input, output, session) {
         lidar <- NA
         hascrs <- NA
        # future({
-       withProgress(message = "Calcolo...", value = 0, {
+       resProg <- withProgress(message = "Calcolo...", value = 0, {
             bboxes <- list()
             crs = list()
             vars  <- names(AI.variables)
@@ -297,34 +299,27 @@ function(input, output, session) {
 
                     lidar <- rf
                     ll <- lidR::readLASheader(rf)
-                    crs[['LAS']] = st_crs(lidR::crs(ll))$wkt
+                    crs[['LAS']] <- st_crs(lidR::crs(ll))$wkt
 
-                    if(is.na(crs[['LAS']])){
-# browser()
-                      showModal(
-                        modalDialog(
-                        title = "CRS Mancante nel dato lidar!",
-                        div(title="Inserire un numero corrispondente al codice EPSG del sistema di riferimento cartografico o geografico.",
-                            numericInput("crs_feedback_input", "Sistema di riferimento:",
-                                         min=1, max=99999, value=4326,
-                                         width = "100%")
-                            ),
-                        "coordinate centrali: X=", ll$`X offset`,
-                        " Y=", ll$`Y offset`,
-                        footer = tagList(
-                          modalButton("Cancella"),
-                          actionButton("crs_submit_feedback", "Registra")
-                        )
-                       )
-                      )
+                    if(isTruthy(input$crs) ) {
+                      logIt(
+                        type="warning",
+                        "Sto forzando il sistema di riferimento del dato lidar a EPGS=",
+                        input$crs,
+                        " - se non è una cosa voluta, togliere il valore dal campo in input -sistema di riferimento.",
+                        session=session)
 
-
-#                       logIt(
-#                             type="warning",
-# "Non è codificato un sistema di riferimento nel
-#  dato LAS/LAZ, il file è corrotto o non è stato esportato
-#  correttamente. I dati del lasheader sono: ",
-# ll, session=session)
+                      lidR::crs(ll) <- input$crs
+                    }
+                    crs[['LAS']] <- st_crs(lidR::crs(ll))$wkt
+                    if(is.na(crs[['LAS']]) && !isTruthy(input$crs) ){
+                      logIt(
+                            type="warning",
+paste0("Non è codificato un sistema di riferimento nel
+ dato LAS/LAZ, il file è corrotto o non è stato esportato
+ correttamente. Inseriscilo nel campo  -Sistema di riferimento-  manualmente.
+<br>I dati del lasheader sono:<br>coordinate centrali:<br> - X=", ll$`X offset`,
+"<br> - Y=", ll$`Y offset`),  session=session)
 
                       return(NULL)
 
@@ -360,10 +355,13 @@ function(input, output, session) {
 
             }
 
-
+        return(TRUE)
 
         }) #%...>% dat
-
+       if(is.null(resProg)) {
+         logIt(session = session, type="warning",  "Step 1 non completo")
+         return(NULL)
+       }
        if(!exists("infrastruttura") && exists("lidar") ) {
          logIt(session = session, type="warning", alert = T,
                "Nessun file vettoriale che rappresenta l'infrastruttura nel progetto,
@@ -405,7 +403,7 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         dd<-(isolate(dat()))
 
         if(is.null(dd) || is.null(dd$lidar)){
-            logIt(sprintf("Cache non pronta, esegui STEP 1!"  ),alert = T)
+            logIt(sprintf("Cache non pronta, ri-esegui STEP 1!"  ),alert = T)
             return(NULL)
         }
         descrittori <- list()
@@ -439,13 +437,16 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
           ## se non c'è las normalizzato vuol dire che non c'è DTM e CHM
           progress$set(value = 5, message = "Leggo il dato lidar")
           ll <- lidR::readLAS(dd$lidar)
-          infrastructure <- sf::st_transform(infrastructure, st_crs(ll) )
+
+          infrastructure <- sf::st_transform(infrastructure, dd$crss$LAS )
 
           progress$set(value = 6, message = "Ritaglio il dato lidar START")
           infrastructure.harmonized.buf <- sf::st_buffer(infrastructure,
                                                          isolate(input$distanza.max.intorno.infrastruttura))
-
-          las.clip <- lidR::clip_roi(ll, infrastructure.harmonized.buf)
+          if(is.na(lidR::crs(ll)) && isTruthy(input$crs) ){
+            lidR::crs(ll) <- input$crs
+          }
+          las.clip <- lidR::clip_roi(ll, sf::st_union(infrastructure.harmonized.buf))
           ll <- las.clip
           rm(las.clip)
 
@@ -540,7 +541,7 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         descrittori[["dtm"]] <- dtm
         # descrittori[["ll.norm"]] <- ll.norm
 
-        crowns <- crowns |> filter(convhull_area > input$resolution*10)
+        crowns <- crowns |> dplyr::filter(convhull_area > input$resolution*10)
 
         # descrittori[["crowns"]] <- crowns
 
@@ -565,7 +566,7 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         r_crowns <- rasterize(crowns, dtm, field=crowns$treeID)
         chmt <- chm
         chmt[is.na(r_crowns)] <- 0
-        # plot(chm)
+        # plot(chmt)
         dsm <-  dtm+chmt
         # plot(dtm+chm)
         # plot(dsm)
@@ -617,7 +618,16 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         } else {
             logIt("NDVI mediana per chioma ...calcolo...",
                   type = "info", session=session)
-            r1 <- terra::rast(input[["select_NDVI"]])
+
+            if(!file.exists(input[["select_NDVI"]]) ) {
+              logIt("NDVI non trovato, inserisco valori costanti",
+                    type = "warning", session=session)
+              r1 <- terra::rast(chmt)
+              r1[] <- 0.05
+              r1[chmt[]>0] <- 0.5
+            } else {
+              r1 <- terra::rast(input[["select_NDVI"]])
+            }
             descrittori[["NDVI"]] <- resample(r1, dtm, method = "bilinear")
 
             descrittori[["NDVI"]]  <- mask(descrittori[["NDVI"]] , dtm)
@@ -640,10 +650,19 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
             logIt("Emissione termica medio per chioma già calcolato",
                   type = "info", session=session)
         } else {
+
+          if(!file.exists(input[["select_Termico"]]) ) {
+            logIt("NDVI non trovato, inserisco valori costanti",
+                  type = "warning", session=session)
+            r1 <- terra::rast(chmt)
+            r1[] <- 15
+          } else {
+            r1 <- terra::rast(input[["select_Termico"]])
+          }
+
             logIt("TERMICO mediana per chioma ...calcolo...",
                   type = "info", session=session)
 
-            r1 <- terra::rast(input[["select_Termico"]])
 
             descrittori[["Termico"]] <- resample(r1, dtm, method = "bilinear")
             descrittori[["Termico"]]  <- mask(descrittori[["Termico"]] , dtm)

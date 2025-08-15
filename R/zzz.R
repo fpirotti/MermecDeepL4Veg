@@ -41,7 +41,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
   )
   # List all required packages (CRAN or GitHub)
   required_cran <- c("leaflet", "cli", "shiny", "shinydashboardPlus",
-                     "shinydashboard", "terra",
+                     "shinydashboard", "terra", "dplyr",
                      "sf", "lidR", "shinyjs", "cli",
                      "leaflet.extras", "h2o", "shinyWidgets")
 

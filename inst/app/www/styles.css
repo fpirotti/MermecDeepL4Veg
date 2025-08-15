@@ -2,7 +2,12 @@
       display: inline-block;
       margin-right: 15px;
     }
-
+.btn2process {
+    background-color:#ff0000;
+}
+.btnProcessed {
+    background-color:#00ff0044;
+}
 .ok {
     color:black;
     background-color:#00ff0044;

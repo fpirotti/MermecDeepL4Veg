@@ -16,10 +16,21 @@ header <- shinydashboardPlus::dashboardHeader(
                                     src = "images/clipboard-34019662.png") ),
                     shiny::column(width = 8, p("MONDO ROTAIA ") ) ),
     tags$li(
+
+        a(
+            href = "example/esempio.zip",
+            target = "_blank",
+            style = "font-size: large;",
+            title  ="relazione",
+            "📝 "
+        ),
+        class = "dropdown"
+    ),
+    tags$li(
         a(
             href = "manuale/relazione.pdf",
             target = "_blank",
-            style = "color:white; padding: 15px; width:24px;",
+            style = "font-size: large;",
             title  ="relazione",
             "📖 "
         ),
@@ -71,7 +82,7 @@ body <- dashboardBody(
         tags$link(rel = "stylesheet", type = "text/css", href = "styles.css?v=3dddxxsff")
     ),
     useShinyjs(),
-    tabBox(id = 'tabs', title = "ss", width = 12,
+    tabBox(id = 'tabs',   width = 12,
            tabPanel("Input",
                     div(
                         div(title="Questa soglia evita di utilizzare un dato lidar inutilmente distante dalla infrastruttura che si vuole analizzare",
@@ -82,7 +93,7 @@ body <- dashboardBody(
                                             max = 50000) ),
 
                         div(title="Forza il sistema di riferimento - inserisci un codice EPGS o lascia vuoto per identificarlo automaticamente",
-                            shiny::numericInput('crs', 'Sistema di riferimento',
+                            shiny::numericInput('crs', HTML(sprintf('%s<sup>[i]<sup>', 'Sistema di riferimento' )),
                                             min = 1, step = 1,
                                             value = NA,
                                             max = 99999)
