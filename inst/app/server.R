@@ -300,28 +300,36 @@ function(input, output, session) {
                     crs[['LAS']] = st_crs(lidR::crs(ll))$wkt
 
                     if(is.na(crs[['LAS']])){
-
-                      showModal(modalDialog(
-                        title = "CRS Mancante!",
+# browser()
+                      showModal(
+                        modalDialog(
+                        title = "CRS Mancante nel dato lidar!",
                         div(title="Inserire un numero corrispondente al codice EPSG del sistema di riferimento cartografico o geografico.",
                             numericInput("crs_feedback_input", "Sistema di riferimento:",
                                          min=1, max=99999, value=4326,
                                          width = "100%")
                             ),
+                        "coordinate centrali: X=", ll$`X offset`,
+                        " Y=", ll$`Y offset`,
                         footer = tagList(
                           modalButton("Cancella"),
                           actionButton("crs_submit_feedback", "Registra")
                         )
                        )
                       )
-                      logIt(
-                            type="warning",
-"Non è codificato un sistema di riferimento nel
- dato LAS/LAZ, il file è corrotto o non è stato esportato
- correttamente. Per proiettare", session=session)
 
-                      break
+
+#                       logIt(
+#                             type="warning",
+# "Non è codificato un sistema di riferimento nel
+#  dato LAS/LAZ, il file è corrotto o non è stato esportato
+#  correttamente. I dati del lasheader sono: ",
+# ll, session=session)
+
+                      return(NULL)
+
                     }
+
                     b<-lidR::st_bbox(ll)
                 }
 
@@ -366,7 +374,7 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
 
        if(!exists("infrastruttura") || !exists("lidar")) {
          logIt(session = session, type="warning", alert = T,
-               "Nessun file per infrastruttura o lidar trovato nella selezione,
+               "Nessun file per infrastruttura e lidar trovato nella selezione,
                     non è possibile proseguire. Assicurati di aver assegnato
                     correttamente gli input nella sezione corrispondente")
          return(NULL)
@@ -384,7 +392,7 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
     # Handle submission of CRS feedback
     observeEvent(input$crs_submit_feedback, {
       removeModal()
-      showNotification("Thank you for your feedback!", type = "message")
+      showNotification("Grazie - CRS registrato", type = "message")
       ff <- dat()
 
       browser()

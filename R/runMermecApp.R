@@ -9,6 +9,7 @@
 #' @export
 #' @examples
 #' # runMermecApp()
+#' # Scarica il file di esempio cliccando in alto a destra
 runMermecApp <- function(forceH2Oriavvio=FALSE) {
   app_dir <- system.file("app", package = "MermecDeepL4Veg")
   options(forceH2Oriavvio = forceH2Oriavvio)
