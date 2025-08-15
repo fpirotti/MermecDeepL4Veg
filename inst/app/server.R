@@ -24,7 +24,7 @@ function(input, output, session) {
     model_future <- reactiveVal(NULL)
 
     if(!sum(file.exists(h2o.log.files))>1){
-        logIt(session=session, "Non trovato il file di log dell'infrastruttura AI utilizzata...", type="warning")
+        logIt(session=session, "Non trovato il file di log dell\\'infrastruttura AI utilizzata...", type="warning")
     }
 
 
@@ -652,10 +652,11 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         } else {
 
           if(!file.exists(input[["select_Termico"]]) ) {
-            logIt("NDVI non trovato, inserisco valori costanti",
+            logIt("Termico non trovato, inserisco valori costanti",
                   type = "warning", session=session)
             r1 <- terra::rast(chmt)
-            r1[] <- 15
+            r1[] <- 25
+            r1[chmt[]>0] <- 15
           } else {
             r1 <- terra::rast(input[["select_Termico"]])
           }
@@ -668,8 +669,9 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
             descrittori[["Termico"]]  <- mask(descrittori[["Termico"]] , dtm)
 
             values <- values(descrittori[["Termico"]], na.rm = TRUE)
-            q95 <- quantile(values, probs = 0.98, na.rm = TRUE)
-            q05 <- quantile(values, probs = 0.02, na.rm = TRUE)
+            q95 <- quantile(values[,1], probs = 0.98, na.rm = TRUE)
+            q05 <- quantile(values[,1], probs = 0.02, na.rm = TRUE)
+
             descrittori[["hazard_temperature"]] <-  (descrittori[["Termico"]] - q05) / (q95 - q05)
             gt <- descrittori[["hazard_temperature"]][] > 1
             lt <- descrittori[["hazard_temperature"]][] < 0
@@ -692,6 +694,7 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         descrittori[["hazard"]] <- mask(descrittori[["hazard"]], r_crowns)
         stack <- terra::rast(descrittori )
         writeRaster(stack,file.path(risultatoDir, "stack.tif" ), overwrite=T  )
+        crowns[names(stack)]<-NULL
         crowns.ext <- terra::zonal(stack, r_crowns)
         crownsb <- cbind(crowns, crowns.ext)
 
@@ -898,9 +901,13 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         for(i in names(AI.variables) ){
             ii <- input[[paste0("select_", i)]]
             ext <- tools::file_ext(ii)
+            if(!file.exists(ii)) next
             if(tolower(ext)=="las" || tolower(ext)=="laz") {
-                lidar <- rf
+
                 llidar <- lidR::readLASheader(ii)
+                if(is.na(lidR::crs(llidar)) && isTruthy(input$crs) ){
+                  lidR::crs(llidar) <- input$crs
+                }
                 bbox<-lidR::st_bbox(llidar)  |>
                     sf::st_as_sfc()  |>
                     sf::st_transform(  crs=4326)

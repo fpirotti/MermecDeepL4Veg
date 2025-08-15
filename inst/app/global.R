@@ -46,7 +46,7 @@ forceH2Oriavvio <- getOption("forceH2Oriavvio")
 isalive <- is_h2o_alive()[[1]] && !is.null(h2o.getConnection())
 if(!isalive) {
   file.remove(list.files(cartella.log.h2o, full.names = TRUE))
-  h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
+  h2o.init(port = 54321, log_dir = file.path(getwd(), cartella.log.h2o), log_level = "INFO")
 } else {
 
 
@@ -58,7 +58,7 @@ if(!isalive) {
       message(cli::col_green( "Spenta l'engine AI...") )
       Sys.sleep(3)
       message(cli::col_green( "Riavvio l'engine AI...") )
-      h2o.init(port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
+      h2o.init(port = 54321, log_dir =  file.path(getwd(), cartella.log.h2o), log_level = "INFO")
       message(cli::col_green( "Engine di AI riavviata...") )
     } else {
       message(cli::col_green( "L'engine  AI già avviata e disponibile")  )
