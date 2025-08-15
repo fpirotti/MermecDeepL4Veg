@@ -786,50 +786,66 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         return(NULL)
       }
 
-      progress$set(value = 2, message = "Leggo il dato lidar")
-      test2 <- readLAS(VALS$nlidar)
-      progress$set(value = 6, message = "Estraggo i dati dal dato lidar")
-      test <- test2@data[,1:7]
-      names(test)<-c("x","y","z", "gpstime", "int","return","returns" )
-
-      progress$set(value = 18, message = "calcolo descrittori geometrici distanza 1 dal  dato lidar")
-      features.test2a <- CloudGeometry::calcGF(test[,1:3])
-      progress$set(value = 22, message = "calcolo descrittori geometrici  distanza 2 dal  dato lidar")
-      features.test2b <- CloudGeometry::calcGF(test[,1:3],2, verbose =T)
-
-      progress$set(value = 16, message = "calcolo descrittori geometrici  distanza 3 dal  dato lidar")
-      features.test2c <- CloudGeometry::calcGF(test[,1:3],4, verbose = T, threads = 14)
-      progress$set(value = 41, message = "Unisco descrittori geometrici   dato lidar")
-      features.test2 <- cbind(features.test2a, features.test2b, features.test2c)
-
-      test.data<-cbind(test[,-c(1:3)], features.test2)
-      progress$set(value = 58, message = "Creo dataset per modello AI da dare al cluster")
-      df.test <- h2o::as.h2o(test.data)
-
-
-      ### RANDOM FOREST AND DEEP LEARNING ----
-
-
-      progress$set(value = 61, message = "Applico il modello ai dati")
-      df.pred <- h2o.predict(myselectedModel, newdata = df.test)
-
-      progress$set(value = 72, message = "Dataframe ...")
-      df.pred.df<-as.data.frame(df.pred)
-
-      progress$set(value = 82, message = "converto ...")
-
-      test2$Classification <- as.integer(df.pred.df$predict)
+      if(!file.exists( file.path(risultatoDir, "stack.tif" ) ) ) {
+        logIt(alert=T, "Rielabora step 2.")
+        return(NULL)
+      }
       progress$set(value = 92, message = "Scrivo laz ...")
-      lidR::writeLAS(test2, file.path(risultatoDir, "AIout.laz" ) )
-
-      # test2 <- lidR::readLAS( file.path(risultatoDir, "AIout.laz" ) )
-      test3 <- test2 |> lidR::filter_poi(Classification < 3L)
-
-      dtm <- terra::rast(file.path(risultatoDir, "stack.tif" ) )
-      tt <- lidR::rasterize_density(test3, dtm$dtm)
-      dtm$hazard[tt[]>0] <- 0
-      writeRaster(dtm$hazard,file.path(risultatoDir, "treeHazardDL.tif" ), overwrite=T )
+      rast_stack <- terra::rast(file.path(risultatoDir, "stack.tif" ) )
+      # gg<- sum(rast_stack[[ grepl("hazard_", names(rast_stack)) ]])
+      # q95 <- quantile(gg[][,1], probs = 0.98, na.rm = TRUE)
+      # gg2 <- gg/(q95[[1]])
+      # ww <- which(gg2[][,1] > 1)
+      # gg2[ ww ] <- 1
+      writeRaster(rast_stack$hazard,file.path(risultatoDir, "treeHazardDL.tif" ), overwrite=T )
       progress$close()
+
+
+
+      # progress$set(value = 2, message = "Leggo il dato lidar")
+      # test2 <- readLAS(VALS$nlidar)
+      # progress$set(value = 6, message = "Estraggo i dati dal dato lidar")
+      # test <- test2@data[,1:7]
+      # names(test)<-c("x","y","z", "gpstime", "int","return","returns" )
+      #
+      # progress$set(value = 18, message = "calcolo descrittori geometrici distanza 1 dal  dato lidar")
+      # features.test2a <- CloudGeometry::calcGF(test[,1:3])
+      # progress$set(value = 22, message = "calcolo descrittori geometrici  distanza 2 dal  dato lidar")
+      # features.test2b <- CloudGeometry::calcGF(test[,1:3],2, verbose =T)
+      #
+      # progress$set(value = 16, message = "calcolo descrittori geometrici  distanza 3 dal  dato lidar")
+      # features.test2c <- CloudGeometry::calcGF(test[,1:3],4, verbose = T, threads = 14)
+      # progress$set(value = 41, message = "Unisco descrittori geometrici   dato lidar")
+      # features.test2 <- cbind(features.test2a, features.test2b, features.test2c)
+      #
+      # test.data<-cbind(test[,-c(1:3)], features.test2)
+      # progress$set(value = 58, message = "Creo dataset per modello AI da dare al cluster")
+      # df.test <- h2o::as.h2o(test.data)
+      #
+      #
+      # ### RANDOM FOREST AND DEEP LEARNING ----
+      #
+      #
+      # progress$set(value = 61, message = "Applico il modello ai dati")
+      # df.pred <- h2o.predict(myselectedModel, newdata = df.test)
+      #
+      # progress$set(value = 72, message = "Dataframe ...")
+      # df.pred.df<-as.data.frame(df.pred)
+      #
+      # progress$set(value = 82, message = "converto ...")
+      #
+      # test2$Classification <- as.integer(df.pred.df$predict)
+      # progress$set(value = 92, message = "Scrivo laz ...")
+      # lidR::writeLAS(test2, file.path(risultatoDir, "AIout.laz" ) )
+      #
+      # # test2 <- lidR::readLAS( file.path(risultatoDir, "AIout.laz" ) )
+      # test3 <- test2 |> lidR::filter_poi(Classification < 3L)
+      #
+      # dtm <- terra::rast(file.path(risultatoDir, "stack.tif" ) )
+      # tt <- lidR::rasterize_density(test3, dtm$dtm)
+      # dtm$hazard[tt[]>0] <- 0
+      # writeRaster(dtm$hazard,file.path(risultatoDir, "treeHazardDL.tif" ), overwrite=T )
+      # progress$close()
 
 
     })
