@@ -31,6 +31,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
     packageStartupMessage(
       "\u2705 Verifico opzioni..."
     )
+
     # Set a CRAN mirror for non-interactive installations just in case
     options(repos = c(CRAN = "https://cloud.r-project.org"))
     options(timeout = 600) # 10 minutes

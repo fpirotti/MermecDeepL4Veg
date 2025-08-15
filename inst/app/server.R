@@ -81,7 +81,7 @@ function(input, output, session) {
       req(cache)
       req(input$selectModel)
       logIt( "Carico il modello... attendere", type = "warning", session=session)
-      myselectedModel <- h2o.loadModel(input$selectModel)
+      myselectedModel <<- h2o.loadModel(input$selectModel)
       logIt( "Modello caricato.", session=session)
 
     })
@@ -266,7 +266,7 @@ function(input, output, session) {
                   input[[ paste0("select_", vars[[i]]) ]]
                 })
 
-                if(!isTruthy(iname)) {
+                if(!isTruthy(iname) || iname=="FALSE" ) {
                   logIt(session = session, type="warn", "Nessun file per " , vars[[i]], " trovato")
                   next
                 }
@@ -759,18 +759,17 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
       }
       req(!file.exists( file.path(risultatoDir, "AIout.laz" ) ) )
 
-
+      VALS<-dat()
       req(VALS)
 
-      browser()
       progress <- Progress$new(session, min=1, max=100)
 
       progress$set(value = 2, message = "Carico il modello")
 
 
 
-      if(!exists("myselectedModel")) {
-        logIt(alert=T, "Modello addestrato non trovato.")
+      if(!exists("myselectedModel") || is.null(myselectedModel)) {
+        logIt(alert=T, "Modello non selezionato o  non trovato.")
         return(NULL)
       }
 
