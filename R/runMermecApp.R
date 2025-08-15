@@ -15,5 +15,5 @@ runMermecApp <- function(forceH2Oriavvio=FALSE) {
   options(forceH2Oriavvio = forceH2Oriavvio)
 
   # source("global.R", local = TRUE)
-  shiny::runApp(app_dir, ...)
+  shiny::runApp(app_dir)
 }
