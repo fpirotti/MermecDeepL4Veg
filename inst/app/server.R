@@ -168,12 +168,15 @@ function(input, output, session) {
             dir.create(cacheDir)
         }
 
+        logIt("Carico ", basename(currentProjectRootDir),  session=session)
         if(length(ll)>0){
            if(file.exists(cache)){
                logIt("<b>cache   esiste  </b> ",   session=session)
                load(cache)
                dat(dt.data)
            }else {
+
+             dat(NA)
                logIt("cache non esiste vai a STEP 1 ", type = 'warning', session=session)
            }
         } else {
@@ -211,6 +214,13 @@ function(input, output, session) {
           updateNumericInput(inputId = "crs",
                              value = filesAndAttributes[["crs"]])
 
+        } else {
+          updateNumericInput(inputId = "distanza.max.intorno.infrastruttura",
+                             value = 100)
+          updateNumericInput(inputId = "resolution",
+                             value = 1)
+          updateNumericInput(inputId = "crs",
+                             value = NA)
         }
 
     })
@@ -317,7 +327,16 @@ function(input, output, session) {
                     ll <- lidR::readLASheader(rf)
                     crs[['LAS']] <- st_crs(lidR::crs(ll))$wkt
 
-                    if(isTruthy(input$crs) ) {
+                    if(!is.na(crs[['LAS']]) && isTruthy(input$crs) ) {
+                      logIt(
+                        type="warning",
+                        "Ignoro il sistema di riferimento impostato come input EPGS=",
+                        input$crs,
+                        " dato che il file lidar ha già un suo sistema di riferimento.",
+                         session=session)
+
+                    }
+                    if(is.na(crs[['LAS']]) && isTruthy(input$crs) ) {
                       logIt(
                         type="warning",
                         "Sto forzando il sistema di riferimento del dato lidar a EPGS=",
@@ -378,7 +397,7 @@ paste0("Non è codificato un sistema di riferimento nel
          logIt(session = session, type="warning",  "Step 1 non completo")
          return(NULL)
        }
-       if(!exists("infrastruttura") && exists("lidar") ) {
+       if(!exists("infrastruttura") && !is.na(lidar) ) {
          logIt(session = session, type="warning", alert = T,
                "Nessun file vettoriale che rappresenta l'infrastruttura nel progetto,
                     non è possibile proseguire. Assicurati di aver caricato un progetto con
@@ -386,9 +405,9 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
          return(NULL)
        }
 
-       if(!exists("infrastruttura") || !exists("lidar")) {
+       if(!exists("infrastruttura") || is.na(lidar) ) {
          logIt(session = session, type="warning", alert = T,
-               "Nessun file per infrastruttura e lidar trovato nella selezione,
+               "Nessun file per infrastruttura e neanche lidar trovato nella selezione di input,
                     non è possibile proseguire. Assicurati di aver assegnato
                     correttamente gli input nella sezione corrispondente")
          return(NULL)
@@ -416,9 +435,9 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         }
         descrittori <- list()
         stackDescrittori <- list()
-        if(!file.exists(dd$lidar)){
+        if(is.na(dd$lidar) || !file.exists(dd$lidar)){
             logIt(
-                sprintf("File LIDAR %s non trovato nel progetto!", dd$lidar ),alert = T)
+                sprintf("File LIDAR %s non trovato nel progetto! Rilancia STEP 1 con i valori corretti di input.", dd$lidar ),alert = T)
             return(NULL)
         }
 
@@ -454,7 +473,8 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
           if(is.na(lidR::crs(ll)) && isTruthy(input$crs) ){
             lidR::crs(ll) <- input$crs
           }
-          las.clip <- lidR::clip_roi(ll, sf::st_union(infrastructure.harmonized.buf))
+          las.clip <- lidR::clip_roi(ll,
+                                     sf::st_union(infrastructure.harmonized.buf))
           ll <- las.clip
           rm(las.clip)
 
@@ -543,6 +563,8 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
           dtm <- terra::rast(dtm.name )
           infrastructure <- sf::st_transform(infrastructure, st_crs(ll.norm) )
           crowns <- sf::read_sf(crown.polygons.name)
+          file.copy("vegetazione.qml",
+                    file.path(risultatoDir,  sprintf("vegetazione.qml" ) ) )
 
         }
 
@@ -918,10 +940,18 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
             addProviderTiles(providers$CartoDB.Positron,
                              options = providerTileOptions(noWrap = TRUE),
                              group = "CartoDB"
-            ) %>%
-        addBingTiles(apikey = bing.apikey, imagerySet = "Aerial", group = "Bing Aerial")%>%
-            addBingTiles(apikey = bing.apikey, imagerySet = "Road", group = "Bing Road")%>%
-            addBingTiles(apikey = bing.apikey, imagerySet = "CanvasDark", group = "Bing Canvas")
+            )  %>%
+          addProviderTiles(providers$OpenStreetMap,
+                           options = providerTileOptions(noWrap = TRUE),
+                           group = "OpenStreetMap"
+          ) %>%
+          addProviderTiles(providers$Esri.WorldImagery,
+                           options = providerTileOptions(noWrap = TRUE),
+                           group = "Imagery"
+          )
+        # addBingTiles(apikey = bing.apikey, imagerySet = "Aerial", group = "Bing Aerial")%>%
+        #     addBingTiles(apikey = bing.apikey, imagerySet = "Road", group = "Bing Road")%>%
+        #     addBingTiles(apikey = bing.apikey, imagerySet = "CanvasDark", group = "Bing Canvas")
 
 
         req(input$refreshmap)
@@ -966,8 +996,12 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
         }
 
         dta <- dat()
-
-        if(!is.null(dta) && !is.null(dta[["crowns"]]) ) {
+        if(!isTruthy(dta)){
+          logIt(session = session, type="warning", alert = T,
+                "Nessun file elaborato ancora, almeno va eseguito lo STEP 1")
+          return(NULL)
+        }
+        if(  !is.null(dta[["crowns"]]) ) {
 
             dati <- dta[["crowns"]] |>
                 sf::st_transform(4326)
@@ -986,7 +1020,7 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
 
         bbox <- sf::st_bbox(bbox)
         ll <- ll %>%  addLayersControl(
-            baseGroups = c("CartoDB", "Bing Aerial",  "Bing Road",  "Bing Canvas"),
+            baseGroups = c("CartoDB", "OpenStreetMap", "Imagery" ),
             overlayGroups = c(names(AI.variables), "HAZARD") ,
                       options = layersControlOptions(collapsed = FALSE)) %>%
             fitBounds( bbox$xmin[[1]],  bbox$ymin[[1]],

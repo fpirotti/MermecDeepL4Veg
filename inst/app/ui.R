@@ -21,8 +21,8 @@ header <- shinydashboardPlus::dashboardHeader(
             href = "example/esempio.zip",
             target = "_blank",
             style = "font-size: large;",
-            title  ="relazione",
-            "📝 "
+            title  ="Esempio",
+            " 🗺️ "
         ),
         class = "dropdown"
     ),
@@ -31,7 +31,7 @@ header <- shinydashboardPlus::dashboardHeader(
             href = "manuale/relazione.pdf",
             target = "_blank",
             style = "font-size: large;",
-            title  ="relazione",
+            title  ="Manuale pratico-tecnico",
             "📖 "
         ),
         class = "dropdown"
@@ -79,7 +79,7 @@ siderbar <- dashboardSidebar(
 body <- dashboardBody(
     tags$head(
         tags$script(src="myjs.js"),
-        tags$link(rel = "stylesheet", type = "text/css", href = "styles.css?v=3ddf")
+        tags$link(rel = "stylesheet", type = "text/css", href = "styles.css?v=3dvdf")
     ),
     useShinyjs(),
     tabBox(id = 'tabs',   width = 12,

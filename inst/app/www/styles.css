@@ -51,7 +51,6 @@ sup{
  #log {
   height: calc(100vh - 220px);  /* Set to full viewport height */
   overflow-y: auto;  /* Enable scrolling if content exceeds height */
-  white-space: pre;  /* Preserve formatting (spaces and newlines) */
 }
 #logAI {
   height: calc(100vh - 220px);  /* Set to full viewport height */
