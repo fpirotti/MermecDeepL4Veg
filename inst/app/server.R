@@ -532,6 +532,8 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
           dd$nlidar  <- ll.norm.name
           file.remove(crown.polygons.name)
           sf::write_sf(crowns, crown.polygons.name)
+          file.copy("vegetazione.qml",
+                     file.path(risultatoDir,  sprintf("vegetazione.qml" ) ) )
 
         } else {
 
@@ -998,6 +1000,9 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
       removeModal()
       # Your real action happens here
       file.remove(list.files(cacheDir, recursive = TRUE,full.names = TRUE))
+
+      file.remove(list.files(risultatoDir, recursive = TRUE,full.names = TRUE))
+
       dat(NA)
       PRODOTTI(NULL)
     })
