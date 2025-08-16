@@ -15,4 +15,5 @@ Imports:
     utils,
     cli,
     shiny,
-    pacman
+    pacman,
+    h2o
