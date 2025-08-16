@@ -26,6 +26,16 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
         "\u2705  Installo funzionalit\u00E0 H2O"
       )
       utils::install.packages("h2o", type = "source", repos = "http://h2o-release.s3.amazonaws.com/h2o/rel-3.44.0/3/R")
+    } else {
+      if(utils::packageVersion("h2o")!="3.44.0.3"){
+        packageStartupMessage(
+          "\u26A0  Versione  H2O  ", packageVersion("h2o"), " deve essere 3.44.0.3!"
+        )
+        detach("package:h2o", unload = TRUE)
+        utils::install.packages("h2o", type = "source", repos = "http://h2o-release.s3.amazonaws.com/h2o/rel-3.44.0/3/R")
+
+      }
+
     }
 
     packageStartupMessage(

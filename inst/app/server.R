@@ -22,7 +22,8 @@ function(input, output, session) {
     myselectedModel <- NULL
     PRODOTTI <- reactiveVal(NULL)
     # Reactive value to hold the future object
-    model_future <- reactiveVal(NULL)
+    # model_future <- reactiveVal(NULL)
+
 
     if(!sum(file.exists(h2o.log.files))>1){
         logIt(session=session, "Non trovato il file di log dell\\'infrastruttura AI utilizzata...", type="warning")
@@ -77,13 +78,46 @@ function(input, output, session) {
     })
 
 
-    ### MODEL LOAD --------
+    ## MODEL LOAD --------
     observeEvent(input$selectModel, {
       req(cache)
       req(input$selectModel)
+      logIt( "Rimuovo tutti gli elementi da infrastruttura Deep Learning", type = "warning", session=session)
+      h2o.removeAll()
       logIt( "Carico il modello... attendere", type = "warning", session=session)
-      myselectedModel <<- h2o.loadModel(input$selectModel)
-      logIt( "Modello caricato.", session=session)
+
+      myselectedModel <<- tryCatch({
+          if(grepl("mojo/", input$selectModel)){
+            h2o.import_mojo(input$selectModel)
+          } else {
+            h2o.loadModel(input$selectModel)
+          }
+        },
+        error = function(e){
+          logIt( "Problema nel caricamento del modello ",
+                 input$selectModel, type = "error", session=session)
+          return(NULL)
+        })
+
+      if(is.null(myselectedModel)){
+        return(NULL)
+      }
+      # h2o::h2o.save_mojo(myselectedModel, "models/mojo")
+      if(!is.null(myselectedModel@model$cross_validation_metrics_summary)){
+        mm <-  round(myselectedModel@model$cross_validation_metrics_summary$mean[[1]],4)
+        mmsd <-  round(myselectedModel@model$cross_validation_metrics_summary$sd[[1]],4)
+      } else {
+          mm <- "ND"
+        mmsd <- "ND"
+      }
+
+      logIt( "Modello ",
+             basename(input$selectModel),
+             " caricato. Accuratezza media(deviazione standard):",
+             mm,
+             "(",
+             mmsd,
+             ")", session=session)
 
     })
 
@@ -137,7 +171,40 @@ function(input, output, session) {
 
       })
     })
-    ## files 2 process --------
+
+    updateModels <- function(){
+
+      file.copy(input$modelInput$datapath,
+                file.path(cartella.modelli, "mojo",
+                          basename(input$modelInput$name) )
+      )
+      modelss <- c("", list.files(cartella.modelli, full.names = T, recursive = T))
+      names(modelss) <- basename(modelss)
+      models <<- modelss
+      updatePickerInput(session = session,
+                        inputId = "selectModel",
+                        choices= models )
+    }
+
+    observeEvent(input$confermaModelloSovrascrivi,  {
+      updateModels()
+     })
+    ## caricato MODELLO  --------
+    observe({
+      req(input$modelInput)  # Wait until a file is uploaded
+      if( is.element(basename(input$modelInput$name), names(models) ) ){
+        shinyWidgets::ask_confirmation(
+          inputId = "confermaModelloSovrascrivi",
+          title = "Il modello esiste già se confermi verrà sovrascritto (altrimenti rinominalo e ricaricalo)."
+        )
+      }
+
+      updateModels()
+
+
+
+    })
+    ## caricato file di progetto --------
     # output$files2process <- shiny::renderUI({
     observeEvent(input$dataFolder, {
       req(input$dataFolder)

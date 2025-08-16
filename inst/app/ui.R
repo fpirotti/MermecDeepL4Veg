@@ -8,6 +8,7 @@
 #asyn
 
 
+
 options(shiny.maxRequestSize = 200*1024^2)
 
 header <- shinydashboardPlus::dashboardHeader(
@@ -44,7 +45,8 @@ siderbar <- dashboardSidebar(
 
     sidebarMenu(
 
-        div(style="margin-bottom: -40px;", title="Carica un file ZIP con i dati per nuovo progetto", shiny::fileInput("newProjectFiles",
+        div(style="margin-bottom: -40px;", title="Carica un file ZIP con i dati per nuovo progetto",
+            shiny::fileInput("newProjectFiles",
                                        "Carica  progetto:"  ) ),
 
         shiny::selectInput("dataFolder",
@@ -70,7 +72,9 @@ siderbar <- dashboardSidebar(
                               ) ,
         shiny::actionButton("runProcess04",
                             "Step 3 applica AI", disabled = TRUE ) ,
-        shiny::downloadButton("runProcess05",  "Step 4 Scarica risultati", class = "disabled-btn"  )
+        shiny::downloadButton("runProcess05",  "Step 4 Scarica risultati", class = "disabled-btn"  ),
+        hr(),
+        shiny::fileInput("modelInput", "Carica un modello"   )
 
     )
 
@@ -128,54 +132,13 @@ body <- dashboardBody(
                                   )
                               ),
                     verbatimTextOutput("logAI")
-           ),
-           tabPanel("Risultati",
-                    shinyWidgets::addSpinner(plotOutput("rasterPlot1") ),
-                    uiOutput("linkUI01")
-                    )
+           )#,
+           # tabPanel("Risultati",
+           #          shinyWidgets::addSpinner(plotOutput("rasterPlot1") ),
+           #          uiOutput("linkUI01")
+           #          )
 
     )
 )
 
 ui <- dashboardPage(header, siderbar, body, skin = "black")
-
-
-# Define UI for application that draws a histogram
-# fluidPage(
-#
-#     # Application title
-#     titlePanel( shiny::fluidRow(shiny::column(width = 6,
-#                                        tags$img(style="width:200px",
-#                                                 src = "images/clipboard-34019662.png") ),
-#                     shiny::column(width = 6,h2("MONDO ROTAIA ") ) ),
-#                 windowTitle="MyPage"
-#     ),
-#     # Sidebar with a slider input for number of bins
-#     sidebarLayout(
-#         sidebarPanel(
-#             div(title="", shiny::fileInput("newProjectFiles",
-#                                "Carica ZIP con dati per nuovo progetto:"  ) ),
-#             shiny::selectInput("dataFolder",
-#                         "Scegli progetto",
-#                         choices=dir(rootProjects,include.dirs = FALSE) ),
-#
-#             shiny::fluidRow(shiny::actionButton("runProcess01",
-#                                "Step 1 " ) ),
-#             shiny::fluidRow(shiny::actionButton("runProcessAI",
-#                 "Step 2 AI", disabled = T ) ),
-#             shiny::fluidRow(shiny::actionButton("runProcessAI2",
-#             "Step 3 Validazione", disabled = T ) ),
-#             shiny::fluidRow( shiny::actionButton("runProcessAI3",
-#             "Step 4 Esporta", disabled = T ) )
-#         ),
-#
-#         mainPanel(
-#             tabsetPanel(
-#                 tabPanel("Files",  shiny::uiOutput("files2process") ),
-#                 tabPanel("Mappa", leafletOutput("mymap")),
-#                 tabPanel("Log Processi", div(id="log", "Log processi") ),
-#                 tabPanel("Risultati",  shiny::uiOutput("res") )
-#             )
-#         )
-#     )
-# )

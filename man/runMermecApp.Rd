@@ -15,4 +15,5 @@ Esegue il software, vedi esempio.
 }
 \examples{
 # runMermecApp()
+# Scarica il file di esempio cliccando in alto a destra
 }

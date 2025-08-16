@@ -26,8 +26,7 @@ cartella.log.h2o <- "modelliH2O"
 rootProjects <- "data"
 
 ## modelli disponibili
-models <- c("", list.files(cartella.modelli, full.names = T))
-
+models <- c("", list.files(cartella.modelli, full.names = T, recursive = T))
 names(models) <- basename(models)
 
 if(!dir.exists(cartella.log.h2o)) { dir.create(cartella.log.h2o) }
