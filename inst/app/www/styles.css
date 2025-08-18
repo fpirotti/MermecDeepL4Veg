@@ -49,11 +49,11 @@ sup{
     z-index: 99999;
 }
  #log {
-  height: calc(100vh - 220px);  /* Set to full viewport height */
+  height: calc(100vh - 230px);  /* Set to full viewport height */
   overflow-y: auto;  /* Enable scrolling if content exceeds height */
 }
 #logAI {
-  height: calc(100vh - 220px);  /* Set to full viewport height */
+  height: calc(100vh - 230px);  /* Set to full viewport height */
   font-size: x-small;
   overflow-y: auto;  /* Enable scrolling if content exceeds height */
   white-space: pre;  /* Preserve formatting (spaces and newlines) */

@@ -84,7 +84,7 @@ siderbar <- dashboardSidebar(
 body <- dashboardBody(
     tags$head(
         tags$script(src="myjs.js"),
-        tags$link(rel = "stylesheet", type = "text/css", href = "styles.css?v=3dvdf")
+        tags$link(rel = "stylesheet", type = "text/css", href = "styles.css?v=3dvdff")
     ),
     useShinyjs(),
     tabBox(id = 'tabs',   width = 12,
