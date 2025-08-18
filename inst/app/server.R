@@ -35,7 +35,9 @@ function(input, output, session) {
         req(input$LogLevelAI)
         req(input$LogLevelAInLines)
 
-        ll <-system( sprintf("tail -n %d %s",input$LogLevelAInLines,  grep(sprintf("-%s.log$",input$LogLevelAI), h2o.log.files, value = T )), intern = TRUE)
+        ll <-system( sprintf("tail -n %d %s",input$LogLevelAInLines,
+                             grep(sprintf("-%s.log$",input$LogLevelAI),
+                                  h2o.log.files, value = T )), intern = TRUE)
         paste(ll, collapse = "\n")
       })
     ## RISULTATI TAB -----
@@ -1162,5 +1164,18 @@ tutti i file, almeno lidar e infrastruttura (vedi manuale)")
 
 
     })
+
+
+    observeEvent(input$tabs, {
+
+      # Apply color to focused tab
+      if (input$tabs == "Log Processi") {
+        runjs("
+      $('a[data-value=\"Log Processi\"]').css('font-weight', 'normal');
+      $('a[data-value=\"Log Processi\"]').css('text-decoration', 'none');
+      ")
+      }
+    })
+
 
 }

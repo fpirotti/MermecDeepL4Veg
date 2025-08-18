@@ -1,5 +1,5 @@
 options(repos = c(CRAN = "https://cloud.r-project.org"))
-
+#' @importFrom utils packageVersion
 .onLoad <- function(libname, pkgname) {
 
   if (interactive()) {

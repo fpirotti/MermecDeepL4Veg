@@ -74,7 +74,8 @@ siderbar <- dashboardSidebar(
                             "Step 3 applica AI", disabled = TRUE ) ,
         shiny::downloadButton("runProcess05",  "Step 4 Scarica risultati", class = "disabled-btn"  ),
         hr(),
-        shiny::fileInput("modelInput", "Carica un modello"   )
+        div(title="E' possibile caricare un modello nel formato standard MOJO",
+            shiny::fileInput("modelInput", "Carica un modello"   ) )
 
     )
 

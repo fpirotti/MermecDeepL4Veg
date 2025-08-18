@@ -21,7 +21,7 @@ if(!require(CloudGeometry)){
 ## cartella con dentro modelli H2O
 cartella.modelli <- "models"
 ## cartella dove verranno salvati i log
-cartella.log.h2o <- "modelliH2O"
+cartella.log.h2o <- file.path(getwd(), "modelliH2O")
 ## cartella dove verranno salvati i progetti caricati
 rootProjects <- "data"
 
@@ -43,9 +43,10 @@ forceH2Oriavvio <- getOption("forceH2Oriavvio")
 # h2o.init( port = 54321, log_dir = cartella.log.h2o, log_level = "INFO")
 
 isalive <- is_h2o_alive()[[1]] && !is.null(h2o.getConnection())
-if(!isalive) {
+
+if(isalive) {
   file.remove(list.files(cartella.log.h2o, full.names = TRUE))
-  h2o.init(port = 54321, log_dir = file.path(getwd(), cartella.log.h2o), log_level = "INFO")
+  h2o.init(port = 54321, log_dir =cartella.log.h2o, log_level = "INFO")
 } else {
 
 
@@ -57,7 +58,7 @@ if(!isalive) {
       message(cli::col_green( "Spenta l'engine AI...") )
       Sys.sleep(3)
       message(cli::col_green( "Riavvio l'engine AI...") )
-      h2o.init(port = 54321, log_dir =  file.path(getwd(), cartella.log.h2o), log_level = "INFO")
+      h2o.init(port = 54321, log_dir =  cartella.log.h2o, log_level = "INFO")
       message(cli::col_green( "Engine di AI riavviata...") )
     } else {
       message(cli::col_green( "L'engine  AI già avviata e disponibile")  )
@@ -103,7 +104,11 @@ logIt <- function(..., type="info", alert=F, session=NULL){
                             type, date(),  msg) )
 
   if(type!="info"){
-    updateTabsetPanel(session, "tabs", selected = "Log Processi")
+    # updateTabsetPanel(session, "tabs", selected = "Log Processi")
+    runjs("
+      $('a[data-value=\"Log Processi\"]').css('font-weight', '900');
+      $('a[data-value=\"Log Processi\"]').css('text-decoration', 'underline');
+    ")
   }
 
   if(alert){
