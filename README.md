@@ -19,7 +19,9 @@ if (!requireNamespace("remotes", quietly = TRUE)) {
   install.packages("remotes")
 }
 
-## Installa la app 
+## Installa la app ...
+# prima modificare il timeout di default di 60 secondi
+options(timeout = max(600, getOption("timeout")))
 remotes::install_github("fpirotti/MermecDeepL4Veg")
 
 ## Carica la app 
