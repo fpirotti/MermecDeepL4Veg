@@ -6,10 +6,16 @@ Vedi [Installazione](#installazione)
 
 ## Installazione
 
-[**Se installate in ambiente MS WINDOWS**]{.underline} prima installate 
-[Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html)!
+### Software da installare 
 
-Installa nell'ambiente R usando le seguenti righe. 
+ - Installare [R]([https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html](https://cran.rstudio.com/)
+ed [Rstudio](https://posit.co/download/rstudio-desktop/) per prima cosa.
+ - [**Se installate in ambiente MS WINDOWS**]{.underline}  installate 
+poi [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html)!
+
+### Esecuzione
+
+Lanciare RStudio ed eseguire i seguenti comandi: 
 
 ```r
 
@@ -28,10 +34,12 @@ remotes::install_github("fpirotti/MermecDeepL4Veg")
 ## Attenzione, la prima volta viene eseguita una verifica di 
 ## compatibilità, può richiedere qualche minuto
 
+## Lancia l'interfaccia da RStudio mediante i seguenti due comandi
 library(MermecDeepL4Veg)
-
-## Lancia l'interfaccia 
 runMermecApp()
 
 
 ```
+
+Vanno poi caricati i modelli se non sono già presenti. Il software esegue varie elaborazioni e può essere usato anche senza modelli caricati, fino allo step 3.
+
